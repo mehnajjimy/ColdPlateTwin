@@ -1,0 +1,44 @@
+{
+  "classification": "synthetic demonstration configuration",
+  "seed": 20260917,
+  "steady_state": {
+    "screening_window_s": 300,
+    "averaging_interval_s": 180,
+    "maximum_thermal_slope_k_min": 0.03,
+    "maximum_thermal_step_k": 0.3,
+    "maximum_flow_cv": 0.01,
+    "maximum_power_cv": 0.01,
+    "minimum_coverage_fraction": 0.9,
+    "maximum_gap_s": 5.0
+  },
+  "monte_carlo_samples": 4000,
+  "demo_flow_lpm": 1.0,
+  "demo_power_w": 180.0,
+  "density_relative_standard": 0.0003,
+  "enthalpy_relative_standard": 0.0007,
+  "hydraulic": {
+    "entrance_exit_k": 1.5,
+    "bend_k": 0.35,
+    "parallel_channel_k": 1.5,
+    "header_segment_k": 0.08,
+    "plenum_k": 3.0
+  },
+  "thermal": {
+    "grid_size": 25,
+    "heater_power_w": 180.0,
+    "coolant_temperature_c": 24.0,
+    "ambient_temperature_c": 22.0,
+    "aluminum_conductivity_w_m_k": 167.0,
+    "contact_resistance_m2_k_w": 0.0002,
+    "coolant_h_w_m2_k": 1800.0,
+    "environmental_h_w_m2_k": 8.0,
+    "payload_power_fraction": 0.5
+  },
+  "doe": {
+    "flow_lpm": [0.5, 1.0, 1.5],
+    "heater_power_w": [100, 175, 250],
+    "replicated_blocks": 2,
+    "development_envelope_max_flow_lpm": 2.0,
+    "hardware_authorization": false
+  }
+}

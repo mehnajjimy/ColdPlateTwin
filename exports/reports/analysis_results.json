@@ -1,0 +1,70 @@
+{
+  "revision": "Rev A preliminary engineering",
+  "units": "mm, N, MPa, degrees C unless noted",
+  "coordinate_system": "CP-001 upper sealing deck z=0; cavity center x=y=0; ports on x-axis",
+  "external_seal": {
+    "nominal_squeeze_percent": 19.083969465648853,
+    "minimum_squeeze_with_0p03_opening_percent": 17.175572519083975,
+    "maximum_squeeze_nominal_cs_percent": 19.84732824427481,
+    "nominal_2d_gland_fill_percent": 68.73135074994192,
+    "groove_centerline_diameter": 172.65,
+    "oring_centerline_diameter": 173.74,
+    "centerline_fit_percent": -0.6273742373661813,
+    "status": "PRELIMINARY: verify actual ring tolerance, compound, swelling, thermal exposure, and Parker axial-face-seal rules"
+  },
+  "thermal_insert_fit": {
+    "cold_minimum_diametral_clearance": 1.3499999999999943,
+    "hot_insert_cold_base_clearance": 0.49901999999997315,
+    "clearance_after_reserved_growth": 0.29901999999997314,
+    "hot_insert_max_diameter": 164.50098000000003,
+    "status": "passes dimensional screening; conditioned-polymer measurement remains required"
+  },
+  "assembled_height_budget": {
+    "nominal_channel_height": 4.0,
+    "worst_case_min": 3.95,
+    "worst_case_max": 4.05,
+    "specified_range": [
+      3.95,
+      4.05
+    ],
+    "status": "exactly consumes tolerance band before flatness; match-finish insert floor to measured base"
+  },
+  "pressure_screening": {
+    "pressure_mpa": 0.03,
+    "resultant_force_n": 641.4739499548658,
+    "load_per_fastener_from_pressure_only_n": 40.09212187217911,
+    "ideal_clamped_deflection_mm": 0.020721642689265997,
+    "simply_supported_screen_mm": 0.08288657075706399,
+    "allowable_additional_opening_mm": 0.1,
+    "status": "screen only; gasket reaction, preload, flange compliance, contact, and thermal distortion unresolved"
+  },
+  "hardware_stack": {
+    "nominal_engagement_mm": 10.5,
+    "worst_case_min_engagement_mm": 10.25,
+    "worst_case_max_engagement_mm": 10.75,
+    "modeled_full_thread_depth_mm": 12.0,
+    "drill_point_clearance_to_port_envelope_mm": 1.0,
+    "status": "select actual M5x25 screw/washer and verify thread runout; torque not specified"
+  },
+  "port_screening": {
+    "thread_envelope_bottom_wall_mm": 4.15,
+    "drilled_passage_bottom_wall_mm": 8.0,
+    "candidate_thread_length_mm": 13.5,
+    "status": "actual 1/4-18 NPT fitting geometry and engagement required before release"
+  },
+  "internal_gasket": {
+    "nominal_compression_percent": 25.0,
+    "service_compression_range_percent": [
+      12.5,
+      32.49999999999999
+    ],
+    "status": "geometry only; compound, force/deflection, compression set, bulging, and retention test unresolved"
+  },
+  "flow": {
+    "fi100_cad_centerline_path_length_mm": 1120.3994776318627,
+    "fi100_note": "9 x 96 straight passes, 8 semicircular R6 returns, and two modeled diagonal feed transitions",
+    "fi200_parallel_channel_length_mm": 96.0,
+    "fi200_channel_count": 8,
+    "fi300_status": "tapered-manifold candidate; hydraulic improvement not demonstrated"
+  }
+}

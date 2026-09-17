@@ -1,0 +1,22 @@
+item,quantity,material_or_spec,description_status
+CP-001,1,"6061-T6 aluminum, stress-relieved stock where available",Base; 200 x 200 x 25; machined cavity/glands/ports
+CP-002,1,"6061-T6 aluminum, preliminary",Common cold-wall cover; 200 x 200 x 5.5
+FI-000,1,POM-C/acetal final candidate; PETG prototype only,Open-plenum control; use one insert per test
+FI-100,1,POM-C/acetal final candidate; PETG prototype only,Nine-pass serpentine insert
+FI-200,1,POM-C/acetal final candidate; PETG prototype only,Eight-channel parallel insert
+FI-300,1,POM-C/acetal final candidate; PETG prototype only,Tapered-manifold candidate
+TH-001,1,"Aluminum, preliminary; coating TBD",160 dia x 2 payload; 150 dia analysis ROI
+CL-001,1,"Aluminum, preliminary",Provisional adjustable payload/heater clamp
+CL-002,1,Steel or aluminum subject to clamp analysis,Structural perimeter clamp; 166 aperture x 8
+BR-001,4,"Aluminum angle/plate, preliminary",Bench bracket; dry underside attachment
+GS-001,1,AS568-166 nominal 70A EPDM candidate; supplier data required,AS568-166 candidate; verify supplier lot
+GS-013,2,AS568-013 nominal EPDM candidate; supplier data required,AS568-013 transfer face-seal candidates
+GS-RIB-000,1,2 mm compliant sheet/strip; compound and force data unresolved,FI-000 registered perimeter gasket pattern
+GS-RIB-100,1,2 mm compliant sheet/strip; compound and force data unresolved,FI-100 registered strip pattern
+GS-RIB-200,1,2 mm compliant sheet/strip; compound and force data unresolved,FI-200 registered strip pattern
+GS-RIB-300,1,2 mm compliant sheet/strip; compound and force data unresolved,FI-300 registered strip pattern
+HW-M5X25,16,Selected corrosion-compatible fastener TBD,Modeled 8.5 dia head envelope; torque TBD
+HW-WASHER-M5,16,Selected washer TBD,10 OD x 5.3 ID x 1 envelope
+HW-NPT-1/4,2,Actual fitting TBD,1/4-18 NPT candidate; verify thread/fitting envelope
+HW-PRESSURE-TAP,2,Actual fitting TBD,Flush static tap connected to each transfer center
+HT-001-ENV,1,Provisional heater envelope only,150 dia x 1 placeholder; no resistive pattern claimed

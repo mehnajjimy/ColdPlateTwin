@@ -1,0 +1,10 @@
+* text=auto
+*.pdf binary
+*.png binary
+*.FCStd binary
+*.blend binary
+*.stl binary
+# Generated exchange files: preserve bytes and suppress noisy text diffs.
+*.step -text -diff
+*.dxf -text -diff
+*.obj -text -diff

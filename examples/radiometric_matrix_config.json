@@ -1,0 +1,13 @@
+{
+  "classification": "synthetic generic fixture; no vendor compatibility is claimed",
+  "delimiter": ",",
+  "skip_rows": 0,
+  "timestamp_column": 0,
+  "frame_column": 1,
+  "data_start_column": 2,
+  "width": 3,
+  "height": 2,
+  "invalid_values": [-9999.0],
+  "already_temperature_corrected": true
+}
+

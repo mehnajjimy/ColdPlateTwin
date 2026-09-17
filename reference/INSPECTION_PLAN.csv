@@ -1,0 +1,24 @@
+feature,requirement,method,status
+CP-001 envelope,200.00 x 200.00 x 25.00 +/-0.10,CMM and calibrated thickness measurement,preliminary
+CP-001 cavity,diameter 165.00 +0.05/-0.00 depth 5.00 +/-0.02,CMM bore scan and depth map,preliminary
+CP-001 deck flatness,0.02 target unrestrained,granite/CMM map without artificial flattening,physical check required
+CP-001 pocket floor flatness,0.03 target unrestrained,CMM height map,physical check required
+Main gland,OD 176.35 +0.05/-0.00 width 3.70 +/-0.05 depth 2.12 +/-0.02,CMM/vision plus depth mic and profilometer,preliminary
+Main gland axis,position diameter 0.05 relative cavity axis,CMM common datum setup,preliminary
+Sealing face finish,Ra <=0.8 micrometre,profilometer,physical check required
+Gland finish,Ra <=1.6 micrometre,profilometer,physical check required
+Cover thickness,5.50 +/-0.05,micrometer map,preliminary
+Cover water face flatness,0.03 target,CMM/optical flatness map,physical check required
+Cover face parallelism,0.03,CMM opposing face map,physical check required
+Bolt holes,diameter 5.50 +0.10/-0.00 position diameter 0.10,CMM and pin gauges,preliminary
+Insert OD,circumscribed 163.60 +/-0.05,CMM/roundness scan after conditioning,physical check required
+Insert floor,1.00 +/-0.03 match finished to measured base,CMM thickness map,physical check required
+Assembled channel height,4.00 +/-0.05 before pressure,replica or displacement mapping under controlled assembly,physical check required
+Rib support plane,3.50 +/-0.03 above insert underside,CMM height map after conditioning,physical check required
+Rib gasket,2.00 +/-0.05 free thickness and width,incoming inspection and lot force-deflection test,compound selection required
+Installed rib gap,1.35 to 1.75,feeler/replica or displacement mapping under preload,physical check required
+Transfer opening,diameter 7.20 +/-0.05,CMM/pin gauge,preliminary
+Transfer gland,OD 14.38 +0.05/-0.00 width 2.50 +/-0.05 depth 1.35 +/-0.02,optical/CMM and depth mic,preliminary
+Loaded cover opening,additional <=0.10 at 30 kPa case,DIC or displacement probes,structural validation required
+Local main-seal opening,<=0.03 at 30 kPa case,local displacement mapping,structural validation required
+Leakage,no external or cross-port leakage at released test pressure,hydrostatic loop test,release pressure undefined

@@ -1,0 +1,490 @@
+{
+  "parts": [
+    {
+      "file": "CP-001_base.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        200.0,
+        200.0,
+        25.0
+      ],
+      "reimported_bbox_mm": [
+        200.0,
+        200.0,
+        25.0
+      ],
+      "source_volume_mm3": 879399.2833263512,
+      "reimported_volume_mm3": 879399.2833262585,
+      "pass": true
+    },
+    {
+      "file": "CP-002_cover.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        200.0,
+        200.0,
+        5.5
+      ],
+      "reimported_bbox_mm": [
+        200.0,
+        200.0,
+        5.5
+      ],
+      "source_volume_mm3": 217909.27008903632,
+      "reimported_volume_mm3": 217909.2700890361,
+      "pass": true
+    },
+    {
+      "file": "CL-002_structural_clamp.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        200.0,
+        200.0,
+        8.0
+      ],
+      "reimported_bbox_mm": [
+        200.0,
+        200.0,
+        8.0
+      ],
+      "source_volume_mm3": 143819.48398668424,
+      "reimported_volume_mm3": 143819.4839866774,
+      "pass": true
+    },
+    {
+      "file": "TH-001_payload.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        160.0,
+        160.0,
+        2.0
+      ],
+      "reimported_bbox_mm": [
+        160.0,
+        160.0,
+        2.0
+      ],
+      "source_volume_mm3": 40212.385965949354,
+      "reimported_volume_mm3": 40212.38596594936,
+      "pass": true
+    },
+    {
+      "file": "CL-001_payload_clamp.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        164.0,
+        164.0,
+        4.0
+      ],
+      "reimported_bbox_mm": [
+        164.0,
+        164.0,
+        4.0
+      ],
+      "source_volume_mm3": 13096.632102142432,
+      "reimported_volume_mm3": 13096.632102152706,
+      "pass": true
+    },
+    {
+      "file": "BR-001_bench_bracket.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        45.0,
+        30.0,
+        45.0
+      ],
+      "reimported_bbox_mm": [
+        45.0,
+        30.0,
+        45.0
+      ],
+      "source_volume_mm3": 21720.597380745763,
+      "reimported_volume_mm3": 21720.597380745694,
+      "pass": true
+    },
+    {
+      "file": "GS-001_AS568-166_envelope.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        176.3600002,
+        176.3600002,
+        2.6200002
+      ],
+      "reimported_bbox_mm": [
+        176.3600002,
+        176.3600002,
+        2.6200002
+      ],
+      "source_volume_mm3": 2942.6740123021286,
+      "reimported_volume_mm3": 2942.67401230227,
+      "pass": true
+    },
+    {
+      "file": "GS-013_transfer_orings_2x.step",
+      "source_solids": 2,
+      "reimported_solids": 2,
+      "source_bbox_mm": [
+        154.38000019999998,
+        14.3800002,
+        1.7800002
+      ],
+      "reimported_bbox_mm": [
+        154.38000019999998,
+        14.3800002,
+        1.7800002
+      ],
+      "source_volume_mm3": 197.0063838817925,
+      "reimported_volume_mm3": 197.00638388180056,
+      "pass": true
+    },
+    {
+      "file": "HW-M5x25_screw_envelope.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        8.5,
+        8.5,
+        30.0
+      ],
+      "reimported_bbox_mm": [
+        8.5,
+        8.5,
+        30.0
+      ],
+      "source_volume_mm3": 774.5989386507334,
+      "reimported_volume_mm3": 774.5989386507285,
+      "pass": true
+    },
+    {
+      "file": "HW-M5_washer_envelope.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        10.0,
+        10.0,
+        1.0
+      ],
+      "reimported_bbox_mm": [
+        10.0,
+        10.0,
+        1.0
+      ],
+      "source_volume_mm3": 56.4779819299105,
+      "reimported_volume_mm3": 56.47798192991174,
+      "pass": true
+    },
+    {
+      "file": "HW-NPT-1_4_candidate_envelope.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        45.5,
+        19.0,
+        16.454482671904337
+      ],
+      "reimported_bbox_mm": [
+        45.5,
+        19.000000000003464,
+        16.454482671904007
+      ],
+      "source_volume_mm3": 7065.716894869198,
+      "reimported_volume_mm3": 7065.716894869442,
+      "pass": true
+    },
+    {
+      "file": "HT-001_heater_provisional_envelope.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        150.0,
+        150.0,
+        1.0
+      ],
+      "reimported_bbox_mm": [
+        150.0,
+        150.0,
+        1.0
+      ],
+      "source_volume_mm3": 17671.458676442588,
+      "reimported_volume_mm3": 17671.45867644259,
+      "pass": true
+    },
+    {
+      "file": "FI-000_insert.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "reimported_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "source_volume_mm3": 25802.309799171788,
+      "reimported_volume_mm3": 25802.30979917264,
+      "pass": true
+    },
+    {
+      "file": "FI-000_rib_gasket.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "reimported_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "source_volume_mm3": 1470.2653618800214,
+      "reimported_volume_mm3": 1470.2653618800541,
+      "pass": true
+    },
+    {
+      "file": "FI-000_fluid_domain.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        152.0,
+        152.0,
+        4.0
+      ],
+      "reimported_bbox_mm": [
+        152.0,
+        152.0,
+        4.0
+      ],
+      "source_volume_mm3": 72583.35666853857,
+      "reimported_volume_mm3": 72583.3566685403,
+      "pass": true
+    },
+    {
+      "file": "FI-100_insert.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "reimported_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "source_volume_mm3": 48791.60862294111,
+      "reimported_volume_mm3": 48791.60862294328,
+      "pass": true
+    },
+    {
+      "file": "FI-100_rib_gasket.step",
+      "source_solids": 3,
+      "reimported_solids": 3,
+      "source_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "reimported_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "source_volume_mm3": 4340.125356692042,
+      "reimported_volume_mm3": 4340.125356688197,
+      "pass": true
+    },
+    {
+      "file": "FI-100_fluid_domain.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        148.0,
+        104.0,
+        4.0
+      ],
+      "reimported_bbox_mm": [
+        148.0,
+        104.0,
+        4.0
+      ],
+      "source_volume_mm3": 35647.298205493826,
+      "reimported_volume_mm3": 35647.2982054958,
+      "pass": true
+    },
+    {
+      "file": "FI-200_insert.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "reimported_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "source_volume_mm3": 49425.50629523124,
+      "reimported_volume_mm3": 49425.50629523412,
+      "pass": true
+    },
+    {
+      "file": "FI-200_rib_gasket.step",
+      "source_solids": 8,
+      "reimported_solids": 8,
+      "source_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "reimported_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "source_volume_mm3": 3486.2653618800177,
+      "reimported_volume_mm3": 3486.2653618800905,
+      "pass": true
+    },
+    {
+      "file": "FI-200_fluid_domain.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        148.0,
+        96.0,
+        4.0
+      ],
+      "reimported_bbox_mm": [
+        148.0,
+        96.0,
+        4.0
+      ],
+      "source_volume_mm3": 34633.06192982975,
+      "reimported_volume_mm3": 34633.061929829906,
+      "pass": true
+    },
+    {
+      "file": "FI-300_insert.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "reimported_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "source_volume_mm3": 50855.55789566751,
+      "reimported_volume_mm3": 50855.55789567075,
+      "pass": true
+    },
+    {
+      "file": "FI-300_rib_gasket.step",
+      "source_solids": 8,
+      "reimported_solids": 8,
+      "source_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "reimported_bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "source_volume_mm3": 3486.2653618800177,
+      "reimported_volume_mm3": 3486.2653618800905,
+      "pass": true
+    },
+    {
+      "file": "FI-300_fluid_domain.step",
+      "source_solids": 1,
+      "reimported_solids": 1,
+      "source_bbox_mm": [
+        148.0,
+        96.0,
+        4.0
+      ],
+      "reimported_bbox_mm": [
+        148.0,
+        96.0000000000015,
+        4.0
+      ],
+      "source_volume_mm3": 32344.979369131743,
+      "reimported_volume_mm3": 32344.97936913091,
+      "pass": true
+    },
+    {
+      "file": "CP-REV-A_assembly_FI-100.step",
+      "reimported_solids": 51,
+      "reimported_bbox_mm": [
+        264.0,
+        200.0,
+        88.5
+      ],
+      "reimported_volume_mm3": 1482690.9825481833,
+      "pass": true,
+      "note": "assembly STEP reimport part-count floor and aggregate envelope/volume check"
+    },
+    {
+      "file": "CP-REV-A_exploded_FI-100.step",
+      "reimported_solids": 13,
+      "reimported_bbox_mm": [
+        200.0,
+        200.0,
+        131.5
+      ],
+      "reimported_volume_mm3": 1368379.9285133092,
+      "pass": true,
+      "note": "assembly STEP reimport part-count floor and aggregate envelope/volume check"
+    },
+    {
+      "file": "CP-REV-A_insert_family.step",
+      "reimported_solids": 24,
+      "reimported_bbox_mm": [
+        703.6,
+        163.6,
+        5.0
+      ],
+      "reimported_volume_mm3": 187657.90405535456,
+      "pass": true,
+      "note": "assembly STEP reimport part-count floor and aggregate envelope/volume check"
+    }
+  ],
+  "fluid_connectivity": {
+    "FI-000": {
+      "fluid_domain_solids": 1,
+      "continuous": true
+    },
+    "FI-100": {
+      "fluid_domain_solids": 1,
+      "continuous": true
+    },
+    "FI-200": {
+      "fluid_domain_solids": 1,
+      "continuous": true
+    },
+    "FI-300": {
+      "fluid_domain_solids": 1,
+      "continuous": true
+    }
+  }
+}

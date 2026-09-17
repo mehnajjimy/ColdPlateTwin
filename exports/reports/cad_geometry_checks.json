@@ -1,0 +1,261 @@
+{
+  "parts": {
+    "CP-001_base": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        200.0,
+        200.0,
+        25.0
+      ],
+      "volume_mm3": 879399.2833263512
+    },
+    "CP-002_cover": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        200.0,
+        200.0,
+        5.5
+      ],
+      "volume_mm3": 217909.27008903632
+    },
+    "CL-002_structural_clamp": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        200.0,
+        200.0,
+        8.0
+      ],
+      "volume_mm3": 143819.48398668424
+    },
+    "TH-001_payload": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        160.0,
+        160.0,
+        2.0
+      ],
+      "volume_mm3": 40212.385965949354
+    },
+    "CL-001_payload_clamp": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        164.0,
+        164.0,
+        4.0
+      ],
+      "volume_mm3": 13096.632102142432
+    },
+    "BR-001_bench_bracket": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        45.0,
+        30.0,
+        45.0
+      ],
+      "volume_mm3": 21720.597380745763
+    },
+    "GS-001_AS568-166_envelope": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        176.3600002,
+        176.3600002,
+        2.6200002
+      ],
+      "volume_mm3": 2942.6740123021286
+    },
+    "GS-013_transfer_orings_2x": {
+      "valid_brep": true,
+      "solid_count": 2,
+      "bbox_mm": [
+        154.38000019999998,
+        14.3800002,
+        1.7800002
+      ],
+      "volume_mm3": 197.0063838817925
+    },
+    "HW-M5x25_screw_envelope": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        8.5,
+        8.5,
+        30.0
+      ],
+      "volume_mm3": 774.5989386507334
+    },
+    "HW-M5_washer_envelope": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        10.0,
+        10.0,
+        1.0
+      ],
+      "volume_mm3": 56.4779819299105
+    },
+    "HW-NPT-1_4_candidate_envelope": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        45.5,
+        19.0,
+        16.454482671904337
+      ],
+      "volume_mm3": 7065.716894869198
+    },
+    "HT-001_heater_provisional_envelope": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        150.0,
+        150.0,
+        1.0
+      ],
+      "volume_mm3": 17671.458676442588
+    },
+    "FI-000_insert": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "volume_mm3": 25802.309799171788
+    },
+    "FI-000_rib_gasket": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "volume_mm3": 1470.2653618800214
+    },
+    "FI-000_fluid_domain": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        152.0,
+        152.0,
+        4.0
+      ],
+      "volume_mm3": 72583.35666853857
+    },
+    "FI-100_insert": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "volume_mm3": 48791.60862294111
+    },
+    "FI-100_rib_gasket": {
+      "valid_brep": true,
+      "solid_count": 3,
+      "bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "volume_mm3": 4340.125356692042
+    },
+    "FI-100_fluid_domain": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        148.0,
+        104.0,
+        4.0
+      ],
+      "volume_mm3": 35647.298205493826
+    },
+    "FI-200_insert": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "volume_mm3": 49425.50629523124
+    },
+    "FI-200_rib_gasket": {
+      "valid_brep": true,
+      "solid_count": 8,
+      "bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "volume_mm3": 3486.2653618800177
+    },
+    "FI-200_fluid_domain": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        148.0,
+        96.0,
+        4.0
+      ],
+      "volume_mm3": 34633.06192982975
+    },
+    "FI-300_insert": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "volume_mm3": 50855.55789566751
+    },
+    "FI-300_rib_gasket": {
+      "valid_brep": true,
+      "solid_count": 8,
+      "bbox_mm": [
+        158.0,
+        158.0,
+        1.5
+      ],
+      "volume_mm3": 3486.2653618800177
+    },
+    "FI-300_fluid_domain": {
+      "valid_brep": true,
+      "solid_count": 1,
+      "bbox_mm": [
+        148.0,
+        96.0,
+        4.0
+      ],
+      "volume_mm3": 32344.979369131743
+    }
+  },
+  "explicit_clearances_mm": {
+    "nominal_insert_to_cavity_diametral": 1.4000000000000057,
+    "minimum_insert_to_cavity_diametral": 1.3499999999999943,
+    "main_groove_inner_edge_to_cavity_radial_land": 1.9749999999999943,
+    "main_groove_outer_edge_to_bolt_hole_radial_land": 3.7250000000000085,
+    "transfer_groove_inner_edge_to_insert_opening_radial_land": 1.0900000000000003,
+    "thread_envelope_to_base_bottom": 4.15,
+    "nominal_drill_to_base_bottom": 8.0,
+    "washer_to_outer_edge_at_nearest_axis_extreme": 2.806183642096343,
+    "clamp_aperture_to_payload_clamp_radial": 1.0,
+    "clamp_aperture_to_payload_radial": 3.0
+  },
+  "interference_intent": {
+    "payload_to_CL001": "intentional annular clamp-contact overlap; actual contact stack awaits heater selection",
+    "gaskets_to_cover": "intentional nominal compression represented by installed-height gasket solids",
+    "all_other_named_parts": "aggregate envelope reviewed; physical assembly verification still required"
+  }
+}

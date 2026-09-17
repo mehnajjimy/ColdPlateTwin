@@ -1,0 +1,90 @@
+{
+  "meshes": [
+    {
+      "file": "FI-000_prototype.stl",
+      "triangles": 2372,
+      "open_or_nonmanifold_edges": 0,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "mesh_bbox_mm": [
+        163.60000610351562,
+        163.60000610351562,
+        3.5
+      ],
+      "pass": true
+    },
+    {
+      "file": "FI-100_prototype.stl",
+      "triangles": 6756,
+      "open_or_nonmanifold_edges": 0,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "mesh_bbox_mm": [
+        163.60000610351562,
+        163.60000610351562,
+        3.5
+      ],
+      "pass": true
+    },
+    {
+      "file": "FI-200_prototype.stl",
+      "triangles": 2896,
+      "open_or_nonmanifold_edges": 0,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "mesh_bbox_mm": [
+        163.60000610351562,
+        163.60000610351562,
+        3.5
+      ],
+      "pass": true
+    },
+    {
+      "file": "FI-300_prototype.stl",
+      "triangles": 2944,
+      "open_or_nonmanifold_edges": 0,
+      "source_bbox_mm": [
+        163.6,
+        163.6,
+        3.5
+      ],
+      "mesh_bbox_mm": [
+        163.60000610351562,
+        163.60000610351562,
+        3.5
+      ],
+      "pass": true
+    }
+  ],
+  "gasket_outlines": [
+    {
+      "file": "FI-000_gasket_cutting_outline.dxf",
+      "imported_entities": 1,
+      "pass": true
+    },
+    {
+      "file": "FI-100_gasket_cutting_outline.dxf",
+      "imported_entities": 3,
+      "pass": true
+    },
+    {
+      "file": "FI-200_gasket_cutting_outline.dxf",
+      "imported_entities": 1,
+      "pass": true
+    },
+    {
+      "file": "FI-300_gasket_cutting_outline.dxf",
+      "imported_entities": 1,
+      "pass": true
+    }
+  ]
+}

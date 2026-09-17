@@ -1,0 +1,56 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.DS_Store
+
+# Generated demonstrations are reproducible and should not be committed.
+outputs/
+
+# Real logger/camera data stays local unless deliberately curated.
+data/raw/
+data/private/
+*.secrets.*
+.env
+
+# Personal work notes, prompts and source attachments stay local.
+prompts/
+docs/*handoff*.md
+docs/code_review_*.md
+reference/project_sources/
+reference/Rev_A_specification.txt
+assets/renders/coldplate_experiment_concept*
+
+# Editor/OS files and additional caches.
+.idea/
+.vscode/
+.ruff_cache/
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*.tmp
+*.log
+.env.*
+!.env.example
+
+# Keep canonical CAD, not redundant previews, transfers or scratch geometry.
+exports/*.zip
+exports/manifest.json
+exports/smoke/
+freecad/*.step
+screenshots/
+output/
+visualization/render_output/
+*.blend[0-9]
+*.FCStd[0-9]
+*.FCBak
+
+# Redundant packaged copies stay local; canonical CAD and reports remain visible.
+exports/package/
