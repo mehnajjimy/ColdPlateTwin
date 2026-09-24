@@ -1,8 +1,7 @@
-"""Read Rev A CAD dimensions and convert millimetres to SI units.
+"""read the rev a cad dimensions and convert millimetres to si units.
 
-This adapter loads only ``cadquery/coldplate/config.py``.  That file contains
-plain dataclasses and does not import CadQuery or OCC, so the analysis package
-stays lightweight while retaining one geometry source of truth.
+only cadquery/coldplate/config.py is loaded. it holds plain dataclasses and
+never imports cadquery or occ, so the cad file stays the one geometry source.
 """
 
 from __future__ import annotations
@@ -17,9 +16,11 @@ from math import hypot, pi
 from pathlib import Path
 
 
+# --- geometry record ---
+
 @dataclass(frozen=True)
 class GeometrySI:
-    """Small SI-unit view of the CAD dimensions needed by the models."""
+    """the cad dimensions the models need in metres, plus the config path and hash."""
 
     revision: str
     base_size_m: float
@@ -45,26 +46,26 @@ class GeometrySI:
     configuration_hash: str
 
 
-def _find_config(explicit_path: str | Path | None = None) -> Path:
-    """Locate the CAD configuration without importing the CAD package."""
+# --- finding and loading the cad config ---
 
-    candidates: list[Path] = []
+def _find_config(explicit_path: str | Path | None = None) -> Path:
+    """find the cad config file without importing the cad package."""
+
+    # an explicit path wins, then the environment variable
+    if not explicit_path:
+        explicit_path = os.environ.get("COLDPLATE_CAD_CONFIG")
     if explicit_path:
         path = Path(explicit_path)
         if not path.is_file():
             raise FileNotFoundError(f"Explicit CAD configuration not found: {path}")
         return path.resolve()
-    if os.environ.get("COLDPLATE_CAD_CONFIG"):
-        return _find_config(os.environ["COLDPLATE_CAD_CONFIG"])
 
-    # Source-tree execution: walk upward from both this file and the current
-    # directory.  This also works from an editable installation.
+    # otherwise walk up from this file, then from the current folder
     for start in (Path(__file__).resolve(), Path.cwd().resolve()):
-        candidates.extend(parent / "cadquery/coldplate/config.py" for parent in [start, *start.parents])
-
-    for candidate in candidates:
-        if candidate.is_file():
-            return candidate.resolve()
+        for folder in [start, *start.parents]:
+            candidate = folder / "cadquery/coldplate/config.py"
+            if candidate.is_file():
+                return candidate.resolve()
     raise FileNotFoundError(
         "Rev A config not found. Run inside the ColdPlateTwin repository or set "
         "COLDPLATE_CAD_CONFIG=/path/to/cadquery/coldplate/config.py"
@@ -72,13 +73,13 @@ def _find_config(explicit_path: str | Path | None = None) -> Path:
 
 
 def _load_parameter_object(path: Path):
-    """Load the plain-Python configuration module from its file path."""
+    """load the plain python config module from its path and return its P object."""
 
     spec = importlib.util.spec_from_file_location("_coldplate_rev_a_config", path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Cannot load CAD configuration: {path}")
     module = importlib.util.module_from_spec(spec)
-    # Register temporarily so dataclasses also works with postponed annotations.
+    # dataclasses needs the module registered while it runs, so add it for a moment
     sys.modules[spec.name] = module
     try:
         spec.loader.exec_module(module)
@@ -87,15 +88,17 @@ def _load_parameter_object(path: Path):
     return module.P
 
 
+# --- converting to si ---
+
 def load_geometry(config_path: str | Path | None = None) -> GeometrySI:
-    """Return the model geometry in metres and a reproducibility hash."""
+    """return the model geometry in metres plus a hash of the cad config."""
 
     path = _find_config(config_path)
     p = _load_parameter_object(path)
     mm = 1e-3
 
-    # Reproduce the CAD screening route exactly: nine straight passes, eight
-    # semicircular returns and two diagonal feed transitions.
+    # fi-100 path length, same route as the cad: straight passes, semicircular
+    # returns between them and two diagonal feed transitions
     transition_mm = hypot(p.transfer_x - p.fi100_straight_length / 2,
                           (p.fi100_pass_count - 1) * p.fi100_pitch / 2)
     path_mm = (
@@ -104,7 +107,7 @@ def load_geometry(config_path: str | Path | None = None) -> GeometrySI:
         + 2.0 * transition_mm
     )
 
-    # Hash every CAD field, including fields added in future revisions.
+    # hash every cad field, so any change to the config changes the hash
     config_hash = hashlib.sha256(json.dumps(asdict(p), sort_keys=True).encode()).hexdigest()
 
     return GeometrySI(

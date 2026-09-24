@@ -4,7 +4,7 @@ Publication checks on 2026-09-17 used a fresh macOS ARM64 virtual environment wi
 
 | Check | Result |
 |---|---|
-| Complete pytest suite | 48 passed |
+| Complete pytest suite | 48 passed (before the 2026-09-24 readability pass) |
 | Installed `coldplate demo` command, without a `PYTHONPATH` override | Completed; 4 accepted synthetic runs, 1 rejected run |
 | `python -m pip check` | No broken requirements |
 | FreeCAD conversion and Blender build scripts | Python syntax checked |
@@ -13,6 +13,8 @@ Publication checks on 2026-09-17 used a fresh macOS ARM64 virtual environment wi
 The fresh environment resolved NumPy 2.5.3, SciPy 1.18.1, pandas 3.0.5, Matplotlib 3.11.2, Streamlit 1.64.0, and pytest 9.1.1. The package declares Python 3.11–3.14 compatibility; this check does not establish testing on every declared version.
 
 Earlier minimum-dependency verification recorded Python 3.12.14, NumPy 1.26.4, SciPy 1.12.0, pandas 2.2.0, and Matplotlib 3.8.0 in a non-editable wheel environment: 47 tests passed, one optional Streamlit test skipped, and dependency checks passed. The checked-in GitHub workflow exercises minimum and current dependencies on Python 3.12; see its run status for remote results.
+
+The readability pass on 2026-09-24 cut the suite to 16 tests that check physics and behaviour against hand-worked answers. All 16 passed on Python 3.14.3 in the local environment. The 47 passed and 1 skipped minimum-dependency result above came from the earlier 48-test suite.
 
 From the repository root, after installing the package:
 

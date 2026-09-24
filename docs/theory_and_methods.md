@@ -22,7 +22,7 @@ $$
 \dot Q_w(t)=\rho(T_\mathrm{loc})\,\dot V(t)\,[h(T_\mathrm{out})-h(T_\mathrm{in})],
 $$
 
-where flow is converted from L/min to m³/s and `T_loc` is the declared inlet or outlet flowmeter location. The package obtains density and enthalpy from its rounded pure-water table (`properties.py`) and integrates the accepted samples with trapezoid weights (`metrics.py`, `steady.py`). This is more faithful than applying one mean flow and one mean temperature difference, especially when samples are not perfectly uniform.
+where flow is converted from L/min to m³/s and `T_loc` is the declared inlet or outlet flowmeter location. The package obtains density and enthalpy from its rounded pure-water table (`properties.py`) and integrates the accepted samples with trapezoid weights (`steady.py` builds the weights and `metrics.py` applies them). This is more faithful than applying one mean flow and one mean temperature difference, especially when samples are not perfectly uniform.
 
 Electrical input and hydraulic power are independently calculated as
 
@@ -105,13 +105,13 @@ R_{e}=\frac{T_{ROI}-\bar T_{in}}{\bar P_e},\qquad
 R_{w}=\frac{T_{ROI}-\bar T_{in}}{\bar Q_w}.
 $$
 
-They answer different questions because electrical input and heat entering water can differ. Point resistance metrics are available when IR and a nonweak denominator are available. Their propagated uncertainty is withheld if the required camera absolute uncertainty is absent. Both are apparatus/measurement quantities, not intrinsic material properties or proof of coolant-side `h`.
+They answer different questions because electrical input and heat entering water can differ. Point resistance metrics are available when IR and a nonweak denominator are available. A ratio is withheld when its denominator is no larger than 1 W, or, with run metadata, no larger than three propagated standard uncertainties. Their propagated uncertainty is withheld if the required camera absolute uncertainty is absent. Both are apparatus/measurement quantities, not intrinsic material properties or proof of coolant-side `h`.
 
 The IR aggregator forms an equal-weight mean of available, timestamped maps inside the accepted interval. Sparse frames therefore support ROI statistics for that sampled mean map, not continuous surface-stability evidence. Camera NETD is not the same thing as absolute accuracy: the current resistance-uncertainty path requires the latter; NETD alone does not establish an absolute temperature uncertainty.
 
 ## Uncertainty and comparisons
 
-The main pipeline uses metadata sensor specifications after calibration: flow, inlet temperature, outlet temperature, voltage, current, and pressure. A stated `standard` or `normal` value is one standard uncertainty; a `rectangular` bound becomes bound/√3. Correlated rectangular inputs are rejected. Declared pair correlations must use compatible calibration IDs and form a positive-semidefinite covariance matrix.
+The main pipeline (`propagate_experiment` in `uncertainty.py`) uses metadata sensor specifications after calibration: flow, inlet temperature, outlet temperature, voltage, current, and pressure. A stated `standard` or `normal` value is one standard uncertainty; a `rectangular` bound becomes bound/√3. Correlated rectangular inputs are rejected. Declared pair correlations must use compatible calibration IDs and form a positive-semidefinite covariance matrix.
 
 For metrics $y=g(x)$, the analytical standard uncertainty is $u(y)=\sqrt{J C J^T}$, where `J` differentiates the same time-weighted, sample-wise estimator and `C` is built from the recorded standard uncertainties and allowed correlations. The error vector has nine shared components: flow, inlet temperature, outlet temperature, voltage, current, pressure, ROI mean, relative density, and relative enthalpy. Calibration effects are treated as run-constant shared errors, not independent sample noise, so they do not automatically shrink with row count. The default deterministic Monte Carlo uses the configuration's 4,000 seeded draws and the same estimator.
 
@@ -133,6 +133,6 @@ These are classical linear, uniform-load circular-plate idealizations. They do n
 
 ## Software verification and boundaries
 
-The corrected suite exercised invalid units/provenance, missing and gapped data, averaging-interval disturbances, uncertainty scaling/covariance, IR time selection, configurable generation, geometry sensitivity, solver residuals, dashboard bundles, and a full CLI demo invoked outside the checkout with explicit CAD/configuration paths. Full-suite evidence is 48 passed in 25.61 s. A minimum non-editable wheel environment (Python 3.12.14; NumPy 1.26.4, SciPy 1.12.0, pandas 2.2.0, Matplotlib 3.8.0) achieved 47 passed and 1 optional Streamlit test skipped, with 14 dependency deprecation warnings and `pip check` succeeding. These are software checks; they do not validate instruments, hardware, materials, or the physical model.
+The corrected suite exercised invalid units/provenance, missing and gapped data, averaging-interval disturbances, uncertainty scaling/covariance, IR time selection, configurable generation, geometry sensitivity, solver residuals, dashboard bundles, and a full CLI demo invoked outside the checkout with explicit CAD/configuration paths. Current test results and the minimum-dependency run are recorded in [Verification](verification.md). These are software checks; they do not validate instruments, hardware, materials, or the physical model.
 
 Water-property reference basis: [IAPWS-95](https://iapws.org/technical-guidance/release/IAPWS-95) and the [NIST Chemistry WebBook fluid-property interface](https://webbook.nist.gov/chemistry/fluid/). The repository has no independently certified interpolation-error budget or full IAPWS solver. The [NumPy trapezoid documentation](https://numpy.org/doc/2.2/reference/generated/numpy.trapezoid.html) documents the NumPy 2.0 API change avoided by the compatible segmentwise integration in this package.

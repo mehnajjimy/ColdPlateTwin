@@ -1,15 +1,20 @@
-"""Screen stability and sampling quality before AND during averaging."""
+"""check stability and sampling quality before and during the averaging interval."""
 
 from dataclasses import asdict, dataclass
 import numpy as np
 import pandas as pd
 
+# logger columns every steady-state check needs
 REQUIRED = ("tin_c", "tout_c", "flow_lpm", "heater_voltage_v",
             "heater_current_a", "dp_pa", "ambient_c")
 
 
+# --- settings and result ---
+
 @dataclass(frozen=True)
 class SteadyStateConfig:
+    """editable steady-state criteria. a unit suffix such as _s (seconds) or _k_min gives the unit where there is one."""
+
     screening_window_s: float = 300.0
     averaging_interval_s: float = 180.0
     maximum_thermal_slope_k_min: float = 0.03
@@ -24,10 +29,13 @@ class SteadyStateConfig:
     include_surface_references: bool = True
 
     def validate(self) -> None:
+        """raise ValueError if any criterion is out of range."""
+        # every numeric criterion must be finite and positive
         for name, value in asdict(self).items():
-            if name not in {"thermal_channels", "include_surface_references"}:
-                if not np.isfinite(value) or value <= 0:
-                    raise ValueError(f"steady_state.{name} must be finite and positive")
+            if name in {"thermal_channels", "include_surface_references"}:
+                continue
+            if not np.isfinite(value) or value <= 0:
+                raise ValueError(f"steady_state.{name} must be finite and positive")
         if self.minimum_coverage_fraction > 1:
             raise ValueError("minimum_coverage_fraction must be <= 1")
         if not {"tin_c", "tout_c"}.issubset(self.thermal_channels):
@@ -36,6 +44,8 @@ class SteadyStateConfig:
 
 @dataclass
 class SteadyStateResult:
+    """outcome of find_steady_state. start and end bound the averaging interval."""
+
     passed: bool
     start: pd.Timestamp | None
     end: pd.Timestamp | None
@@ -44,11 +54,14 @@ class SteadyStateResult:
     criteria: dict
 
 
-def time_weights(time_s: np.ndarray, complete: np.ndarray, maximum_gap_s: float) -> np.ndarray:
-    """Trapezoid weights on adjacent complete samples only.
+# --- time weights ---
 
-    Missing samples break an integration segment. Long gaps receive no weight;
-    no interpolated samples or endpoint extrapolation are invented.
+def time_weights(time_s: np.ndarray, complete: np.ndarray, maximum_gap_s: float) -> np.ndarray:
+    """trapezoid weights using only pairs of neighbouring complete samples.
+
+    each usable pair gives half its time gap to each of its two samples. a
+    missing sample or a gap longer than maximum_gap_s breaks the chain, and
+    nothing is interpolated or extrapolated past the ends.
     """
     weights = np.zeros(len(time_s))
     gaps = np.diff(time_s)
@@ -59,16 +72,22 @@ def time_weights(time_s: np.ndarray, complete: np.ndarray, maximum_gap_s: float)
     return weights
 
 
+# --- one window check ---
+
 def _check_window(time_s, data, power, columns, thermal_columns, start, end, config):
+    """check one time window. returns (list of failure reasons, diagnostics)."""
     selected = (time_s >= start) & (time_s <= end)
     t = time_s[selected]
     values = data[selected]
     complete = np.isfinite(values).all(axis=1)
     reasons = []
+
+    # coverage and the longest gap between valid samples, counting the window edges
     weights = time_weights(t, complete, config.maximum_gap_s)
     covered = float(weights.sum())
     valid_times = t[complete]
-    gap = float(np.diff(np.r_[start, valid_times, end]).max())
+    edges_and_valid_times = np.concatenate(([start], valid_times, [end]))
+    gap = float(np.diff(edges_and_valid_times).max())
     coverage = covered / (end - start)
     diagnostics = {"coverage_fraction": coverage, "maximum_valid_sample_gap_s": gap}
     if coverage < config.minimum_coverage_fraction:
@@ -77,14 +96,19 @@ def _check_window(time_s, data, power, columns, thermal_columns, start, end, con
         reasons.append("valid-sample gap exceeds maximum_gap_s")
     if complete.sum() < 3 or covered == 0:
         return reasons + ["fewer than three usable samples"], diagnostics
+
+    # normalized weights on the weighted samples, time in minutes
     good = weights > 0
     w = weights[good] / covered
     t_minutes = t[good] / 60
     centered_time = t_minutes - np.dot(w, t_minutes)
+
+    # thermal channels: weighted least-squares slope and largest sample-to-sample step
     for channel in thermal_columns:
-        y = values[good, columns.index(channel)]
+        column = columns.index(channel)
+        y = values[good, column]
         slope = float(np.dot(w, centered_time * y) / np.dot(w, centered_time**2))
-        steps = np.abs(np.diff(values[complete, columns.index(channel)]))
+        steps = np.abs(np.diff(values[complete, column]))
         max_step = float(steps.max())
         diagnostics[channel + "_slope_k_min"] = slope
         diagnostics[channel + "_maximum_step_k"] = max_step
@@ -92,21 +116,35 @@ def _check_window(time_s, data, power, columns, thermal_columns, start, end, con
             reasons.append(f"{channel} slope exceeds criterion")
         if max_step > config.maximum_thermal_step_k:
             reasons.append(f"{channel} temperature step exceeds criterion")
-    for name, series, floor, limit in (
+
+    # flow and power: mean must clear a floor, then the weighted cv must be small
+    checks = (
         ("flow", values[good, columns.index("flow_lpm")], config.minimum_flow_lpm, config.maximum_flow_cv),
         ("power", power[selected][good], config.minimum_power_w, config.maximum_power_cv),
-    ):
+    )
+    for name, series, floor, limit in checks:
         mean = float(np.dot(w, series))
-        cv = float(np.sqrt(np.dot(w, (series - mean)**2)) / abs(mean)) if mean > floor else None
+        if mean > floor:
+            cv = float(np.sqrt(np.dot(w, (series - mean)**2)) / abs(mean))
+        else:
+            cv = None
         diagnostics[name + "_cv"] = cv
         if cv is None or cv > limit:
             reasons.append(f"{name} mean/CV fails criterion")
     return reasons, diagnostics
 
 
+# --- search for the first steady interval ---
+
 def find_steady_state(frame: pd.DataFrame, config: SteadyStateConfig = SteadyStateConfig()) -> SteadyStateResult:
-    """Accept only a complete screen, average AND stable interval boundary."""
+    """find the first start whose screen, average and combined windows all pass.
+
+    each candidate start is followed by a screening window and then an
+    averaging interval. the result's start and end are the averaging interval.
+    """
     config.validate()
+
+    # thermal channels to check, plus any surface reference columns
     thermal = list(config.thermal_channels)
     if config.include_surface_references:
         thermal.extend(c for c in frame if c.startswith("surface_reference_") and c not in thermal)
@@ -117,18 +155,27 @@ def find_steady_state(frame: pd.DataFrame, config: SteadyStateConfig = SteadySta
     criteria = asdict(config)
     if len(frame) < 3:
         return SteadyStateResult(False, None, None, ["fewer than three samples"], {}, criteria)
+
+    # seconds since the first sample
     timestamps = pd.DatetimeIndex(frame["timestamp"])
     if timestamps.hasnans or timestamps.tz is None or not timestamps.is_monotonic_increasing or timestamps.has_duplicates:
         raise ValueError("Timestamps must be timezone-aware, unique and increasing")
     t = (timestamps - timestamps[0]).total_seconds().to_numpy()
     data = frame[columns].to_numpy(float)
     power = (frame.heater_voltage_v * frame.heater_current_a).to_numpy(float)
-    screen, average = config.screening_window_s, config.averaging_interval_s
-    reasons, diagnostics = ["run shorter than screening plus averaging intervals"], {}
+
+    # try each start that leaves room for both windows. the first pass wins.
+    screen = config.screening_window_s
+    average = config.averaging_interval_s
+    reasons = ["run shorter than screening plus averaging intervals"]
+    diagnostics = {}
     for start in t[t <= t[-1] - screen - average]:
-        boundary, end = start + screen, start + screen + average
-        reasons, diagnostics = [], {}
-        for name, left, right in (("screen", start, boundary), ("average", boundary, end), ("combined", start, end)):
+        boundary = start + screen
+        end = boundary + average
+        reasons = []
+        diagnostics = {}
+        windows = (("screen", start, boundary), ("average", boundary, end), ("combined", start, end))
+        for name, left, right in windows:
             failures, details = _check_window(t, data, power, columns, thermal, left, right, config)
             diagnostics[name] = details
             reasons.extend(f"{name}: {reason}" for reason in failures)

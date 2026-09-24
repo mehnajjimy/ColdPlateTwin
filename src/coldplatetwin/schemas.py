@@ -1,7 +1,6 @@
-"""Versioned, JSON-serializable experiment schemas.
+"""versioned experiment schemas that serialize to json.
 
-Dataclasses keep the boundary readable and dependency-free.  Validation of the
-measurement table itself lives in :mod:`coldplatetwin.io`.
+the measurement table itself is checked in coldplatetwin.io.
 """
 
 from __future__ import annotations
@@ -16,13 +15,29 @@ from typing import Literal
 import numpy as np
 
 
+# the metadata version this code reads and writes
 SCHEMA_VERSION = "1.0"
-CHANNEL_UNITS = {"flow_lpm": "L/min", "tin_c": "K", "tout_c": "K",
-                 "dp_pa": "Pa", "ambient_c": "K", "heater_voltage_v": "V",
-                 "heater_current_a": "A"}
+
+# the unit each sensor's standard uncertainty must be stated in.
+# temperature uncertainties are differences, so they are in kelvin
+CHANNEL_UNITS = {
+    "flow_lpm": "L/min",
+    "tin_c": "K",
+    "tout_c": "K",
+    "dp_pa": "Pa",
+    "ambient_c": "K",
+    "heater_voltage_v": "V",
+    "heater_current_a": "A",
+}
+
 SourceClass = Literal["synthetic", "experimental"]
 
 
+# ---------------------------------------------------------------------------
+# metadata records
+# ---------------------------------------------------------------------------
+
+# one sensor: its calibration, uncertainty and affine correction
 @dataclass
 class SensorSpec:
     channel: str
@@ -37,6 +52,7 @@ class SensorSpec:
     notes: str = ""
 
 
+# the infrared camera setup used for a radiometric export
 @dataclass
 class CameraMetadata:
     calibration_id: str
@@ -48,6 +64,7 @@ class CameraMetadata:
     notes: str = "NETD describes short-term noise, not absolute accuracy."
 
 
+# how the logger channels share one clock
 @dataclass
 class Synchronization:
     clock_basis: str = "UTC ISO-8601"
@@ -56,15 +73,21 @@ class Synchronization:
     notes: str = "No timing is invented for sources without timestamps."
 
 
+# a correlation between two sensors that share a calibration
 @dataclass
 class CalibrationCorrelation:
-    """Correlation of run-constant errors from a shared calibration."""
+    """correlation of run-constant errors from a shared calibration."""
 
     channel_a: str
     channel_b: str
     correlation: float
 
 
+# ---------------------------------------------------------------------------
+# run metadata
+# ---------------------------------------------------------------------------
+
+# everything recorded about one run, saved as a json file next to the logger csv
 @dataclass
 class RunMetadata:
     run_id: str
@@ -87,9 +110,10 @@ class RunMetadata:
     flow_measurement_location: str = "inlet"
     electrical_power_mode: str = "unspecified"
 
+    # raise ValueError on the first field that is missing, unsafe or ambiguous
     def validate(self) -> None:
-        """Reject metadata that would make units or provenance ambiguous."""
-
+        """reject metadata that would make units or provenance ambiguous."""
+        # identity and provenance
         if self.schema_version != SCHEMA_VERSION:
             raise ValueError(f"Unsupported schema_version {self.schema_version!r}")
         if self.source not in {"synthetic", "experimental"}:
@@ -102,11 +126,20 @@ class RunMetadata:
             raise ValueError("Unknown insert_id")
         if not re.fullmatch(r"[0-9a-fA-F]{64}", self.geometry_hash):
             raise ValueError("geometry_hash must be a 64-character SHA-256 hash")
-        for field_name, unit in (("flow_unit", "L/min"), ("pressure_unit", "Pa"),
-                                 ("temperature_unit", "degC"), ("voltage_unit", "V"),
-                                 ("current_unit", "A")):
+
+        # units are fixed. raw exports in other units must be converted first
+        required_units = (
+            ("flow_unit", "L/min"),
+            ("pressure_unit", "Pa"),
+            ("temperature_unit", "degC"),
+            ("voltage_unit", "V"),
+            ("current_unit", "A"),
+        )
+        for field_name, unit in required_units:
             if getattr(self, field_name) != unit:
                 raise ValueError(f"{field_name} must be {unit}; convert the raw export explicitly")
+
+        # timing and measurement setup
         started = datetime.fromisoformat(self.started_at.replace("Z", "+00:00"))
         if started.tzinfo is None or started.utcoffset() is None:
             raise ValueError("started_at requires an explicit timezone")
@@ -119,6 +152,8 @@ class RunMetadata:
         skew = self.synchronization.maximum_channel_skew_s
         if skew is not None and (not math.isfinite(skew) or skew < 0):
             raise ValueError("maximum_channel_skew_s must be nonnegative")
+
+        # sensors, keyed by channel. each channel may appear only once
         channels = {}
         for sensor in self.sensors:
             unit = CHANNEL_UNITS.get(sensor.channel)
@@ -139,6 +174,7 @@ class RunMetadata:
                 raise ValueError("Sensor uncertainty must be nonnegative and scale positive")
             if sensor.distribution not in {"standard", "normal", "rectangular"}:
                 raise ValueError("Unsupported uncertainty distribution")
+            # a stated bound goes with a rectangular distribution, and only with one
             if sensor.stated_bound is not None:
                 if not math.isfinite(sensor.stated_bound) or sensor.stated_bound < 0:
                     raise ValueError("stated_bound must be finite and nonnegative")
@@ -147,11 +183,16 @@ class RunMetadata:
             if sensor.distribution == "rectangular" and sensor.stated_bound is None:
                 raise ValueError("Rectangular uncertainty requires an explicit stated_bound")
             channels[sensor.channel] = sensor
+
+        # calibration correlations. build the full correlation matrix and check
+        # it is positive semidefinite, as any real correlation matrix must be
         names = list(channels)
         correlation_matrix = np.eye(len(names))
         seen = set()
         for record in self.calibration_correlations:
-            a, b, rho = record.channel_a, record.channel_b, record.correlation
+            a = record.channel_a
+            b = record.channel_b
+            rho = record.correlation
             pair = tuple(sorted((a, b)))
             if a == b or pair in seen or a not in channels or b not in channels:
                 raise ValueError("Invalid or duplicate calibration correlation channels")
@@ -159,13 +200,17 @@ class RunMetadata:
                 raise ValueError("Calibration correlation must lie in [-1, 1]")
             if channels[a].calibration_id != channels[b].calibration_id:
                 raise ValueError("Correlated sensors must name the same calibration_id")
-            if any(channels[c].distribution == "rectangular" for c in (a, b)):
+            if channels[a].distribution == "rectangular" or channels[b].distribution == "rectangular":
                 raise ValueError("Correlated rectangular errors are unsupported; provide a joint normal calibration")
-            i, j = names.index(a), names.index(b)
-            correlation_matrix[i, j] = correlation_matrix[j, i] = rho
+            i = names.index(a)
+            j = names.index(b)
+            correlation_matrix[i, j] = rho
+            correlation_matrix[j, i] = rho
             seen.add(pair)
-        if len(names) and np.linalg.eigvalsh(correlation_matrix).min() < -1e-10:
+        if names and np.linalg.eigvalsh(correlation_matrix).min() < -1e-10:
             raise ValueError("Calibration covariance must be positive semidefinite")
+
+        # the optional camera
         if self.camera:
             camera = self.camera
             if not camera.calibration_id.strip() or not 0 < camera.emissivity <= 1:
@@ -180,10 +225,12 @@ class RunMetadata:
                 if value is not None and (not math.isfinite(value) or value < 0):
                     raise ValueError("Camera uncertainties must be finite and nonnegative")
 
+    # validate, then save as indented json
     def write_json(self, path: str | Path) -> None:
         self.validate()
         Path(path).write_text(json.dumps(asdict(self), indent=2) + "\n")
 
+    # load from json, rebuild the nested records, then validate
     @classmethod
     def read_json(cls, path: str | Path) -> "RunMetadata":
         data = json.loads(Path(path).read_text())
@@ -199,5 +246,6 @@ class RunMetadata:
         return result
 
 
+# the current time in utc as an iso string ending in z
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
