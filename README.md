@@ -1,38 +1,38 @@
-# ColdPlateTwin — Rev A
+# ColdPlateTwin (Rev A)
 
-ColdPlateTwin combines parametric CAD, experiment analysis, and reduced-order thermal–hydraulic models for a water-cooled testbed with interchangeable flow inserts. It turns time-stamped logger data and optional radiometric-temperature matrices into calorimetry, stability checks, uncertainty estimates, and surface-temperature metrics.
+I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It has the parametric CAD for a testbed with interchangeable flow inserts, the code that analyzes the experiment, and simple reduced-order thermal-hydraulic models. The analysis takes time-stamped logger data, plus radiometric temperature matrices if you have them, and turns them into calorimetry, stability checks, uncertainty estimates and surface-temperature metrics.
 
 ![Labeled Blender overview of the proposed ColdPlateTwin experiment](docs/figures/experiment_overview.png)
 
-*Proposed experimental arrangement, rendered in Blender using the Rev A cold-plate CAD. Ancillary equipment and layout are schematic and not to scale; this is not an as-built photograph or a thermal simulation result.*
+*The proposed setup, rendered in Blender from the Rev A cold-plate CAD. The extra equipment and the layout are schematic and not to scale. This isn't a photo of a built rig or a thermal simulation result.*
 
 [Theory and methods](docs/theory_and_methods.md) · [Experiment protocol](docs/experiment_protocol.md) · [CAD assembly](freecad/ColdPlate_RevA.FCStd) · [Blender scene and render source](visualization/README.md)
 
-**Status:** software-tested prototype with preliminary CAD and synthetic examples. Physical calibration, experimental validation, machining approval, and pressure qualification remain outstanding.
+Status: the software is tested, but the CAD is preliminary and all the examples are synthetic. Nothing has been physically calibrated or checked against a real experiment yet, and the hardware isn't approved for machining or pressure qualified.
 
-## Questions the planned experiment can answer
+## What the experiment is for
 
-- Under matched, steady operating conditions, how do inserts change measured heat to water, pressure drop, surface temperature statistics, and their uncertainty?
-- Does the measured energy balance close within its uncertainty after accounting for environmental losses and transient storage?
-- Which differences remain after accounting for shared sensor calibration effects?
+- With the same steady operating conditions, how does each insert change the measured heat to water, the pressure drop, the surface temperature statistics and the uncertainty on each?
+- Does the measured energy balance close within its uncertainty once environmental losses and transient storage are accounted for?
+- Which differences are still there after you take out calibration effects that the runs share?
 
-Those are experimental questions. The included thermal calculation imposes sensitivity patterns for the coolant-side heat-transfer coefficient `h`; it does **not** predict `h` from insert geometry or flow, coolant warming, or establish an insert ranking.
+Those questions need real measurements. The thermal calculation in this repo just imposes sensitivity patterns for the coolant-side heat-transfer coefficient `h`. It doesn't predict `h` from the insert geometry or the flow, it doesn't model the coolant warming up, and it can't rank the inserts.
 
-## What is in the repository
+## What's in the repo
 
-| Area | What it provides | Status |
+| Area | What it has | Status |
 |---|---|---|
-| `cadquery/` | Regeneration source and shared CAD configuration | Preserved source; regenerate and inspect after changes |
+| `cadquery/` | Regeneration source and shared CAD configuration | Preserved source. Regenerate and inspect after any change |
 | `freecad/` | Imported 51-solid assembly and conversion script | Native import, not a fully parametric FreeCAD feature history |
-| `drawings/`, `exports/` | Rev A drawings, STEP/STL/DXF exports and validation evidence | Preliminary engineering artifacts, not release approval |
-| `visualization/` | Editable Blender scene, build script, and metre-scaled CAD mesh | Schematic proposed apparatus |
+| `drawings/`, `exports/` | Rev A drawings, STEP/STL/DXF exports and validation evidence | Preliminary engineering files, not a release approval |
+| `visualization/` | Editable Blender scene, build script and metre-scaled CAD mesh | Schematic of the proposed apparatus |
 | `src/coldplatetwin/` | Analysis, stability, uncertainty, hydraulics, thermal sensitivity and dashboard code | Tested offline workflow |
-| `configs/demo.json` | Explicit demo/model assumptions and provisional acceptance criteria | Editable analysis configuration |
-| `docs/` | [Theory and methods](docs/theory_and_methods.md), [proposed experiment protocol](docs/experiment_protocol.md), and [software verification](docs/verification.md) | Documentation |
+| `configs/demo.json` | The demo and model assumptions, plus provisional acceptance criteria | Editable analysis configuration |
+| `docs/` | [Theory and methods](docs/theory_and_methods.md), [proposed experiment protocol](docs/experiment_protocol.md) and [software verification](docs/verification.md) | Documentation |
 
 ## Install and run
 
-Python 3.11–3.14 is supported; Python 3.12 is the reference version used by CI. Installation does not require CAD software, instruments, a GPU, or a paid solver. See [software verification](docs/verification.md) for tested environments and scope.
+It supports Python 3.11 to 3.14, and CI uses 3.12. You don't need CAD software, instruments, a GPU or a paid solver to install it. [Software verification](docs/verification.md) lists the tested environments and what the tests cover.
 
 ```sh
 cd /path/to/ColdPlateTwin
@@ -43,29 +43,29 @@ coldplate demo --config configs/demo.json --output outputs/demo
 python -m pytest
 ```
 
-On Windows PowerShell, create the environment with `py -m venv .venv` and activate it with `.\.venv\Scripts\Activate.ps1`; the installation and `coldplate` commands are the same.
+On Windows PowerShell, make the environment with `py -m venv .venv` and activate it with `.\.venv\Scripts\Activate.ps1`. The install and `coldplate` commands are the same.
 
-The default demonstration creates four accepted synthetic runs and one rejected run. Its numbers are fixture checks, not experimental results or a design ranking. Generated output is intentionally ignored by Git; use a fresh directory when inputs change.
+The demo makes five synthetic runs. Four pass and one is rejected on purpose. Its numbers are there to check the code, so they aren't experimental results and they don't rank the inserts. Git ignores the generated output, so use a fresh output folder when you change the inputs.
 
 ![Synthetic time traces from the checked-in demonstration](docs/figures/synthetic_time_traces.png)
 
-*Synthetic logger fixture, not measured apparatus data. It illustrates the calibrated channels and the analysis workflow only.*
+*Synthetic logger data, not measured from real hardware. It only shows the calibrated channels and how the analysis works.*
 
 ![Synthetic imposed-h thermal scenario](docs/figures/synthetic_thermal_map.png)
 
-*Model-only temperature scenario using imposed coolant-side `h`; it is not an IR measurement, CFD result, or insert prediction.*
+*A model-only temperature scenario with an imposed coolant-side `h`. It isn't an IR measurement, a CFD result or a prediction for any insert.*
 
-To inspect the local dashboard after generating/importing a bundle:
+To look at the results in the local dashboard once you've generated or imported a bundle:
 
 ```sh
 coldplate dashboard --data outputs/demo
 ```
 
-It binds to localhost (normally port 8501). Stop it with `Ctrl-C`.
+It only listens on localhost, normally on port 8501. Stop it with `Ctrl-C`.
 
 ## Analyze logger data
 
-Input CSV columns are `timestamp`, `flow_lpm`, `tin_c`, `tout_c`, `dp_pa`, `ambient_c`, `heater_voltage_v`, and `heater_current_a`. Metadata declares UTC ISO-8601 timestamps, units, run provenance, geometry hash, calibrations, synchronization, and uncertainty records. The importer rejects wrong units and malformed numeric values rather than silently converting them.
+The input CSV needs the columns `timestamp`, `flow_lpm`, `tin_c`, `tout_c`, `dp_pa`, `ambient_c`, `heater_voltage_v` and `heater_current_a`. The metadata file gives UTC ISO-8601 timestamps, units, where the run came from, the geometry hash, calibrations, synchronization and uncertainty records. If a unit is wrong or a number is malformed, the importer rejects the file instead of quietly converting it.
 
 ```sh
 coldplate analyze logger.csv metadata.json \
@@ -73,7 +73,7 @@ coldplate analyze logger.csv metadata.json \
   --output outputs/imported-run
 ```
 
-For a corrected radiometric temperature-matrix CSV, add a declared parser configuration and physical ROI configuration:
+If you also have a corrected radiometric temperature-matrix CSV, add its parser config and a physical ROI config:
 
 ```sh
 coldplate analyze logger.csv metadata.json \
@@ -82,22 +82,22 @@ coldplate analyze logger.csv metadata.json \
   --output outputs/imported-run
 ```
 
-Only timestamped IR frames inside the accepted averaging interval contribute to ROI metrics; untimed frames are retained for viewing but are not assigned a time. A passing analysis exits 0. A rejected steady state exits 2 and still writes a diagnostic bundle. Omit all three IR options when no IR export is available. Do not present synthetic fixtures as measurements.
+Only IR frames with a timestamp inside the accepted averaging window count toward the ROI metrics. Frames without a time are kept so you can look at them, but they aren't given one. When the analysis passes it exits with 0. When the steady-state check rejects the run it exits with 2, but it still writes a bundle so you can see why. If you don't have an IR export, leave out all three IR options. And please don't present the synthetic examples as measurements.
 
 ## CAD and model provenance
 
-Open `freecad/ColdPlate_RevA.FCStd` in FreeCAD to inspect the imported assembly, or use [the assembled STEP](exports/step/CP-REV-A_assembly_FI-100.step). For a geometry change, edit `cadquery/coldplate/config.py` and follow [the CadQuery regeneration instructions](cadquery/README.md). CadQuery is the regeneration source; changing the configuration requires regenerated geometry, dimensional checks, and a fresh consistency audit before interpreting new model output.
+Open `freecad/ColdPlate_RevA.FCStd` in FreeCAD to look at the imported assembly, or use [the assembled STEP](exports/step/CP-REV-A_assembly_FI-100.step). To change the geometry, edit `cadquery/coldplate/config.py` and follow [the CadQuery regeneration instructions](cadquery/README.md). CadQuery is where the geometry is generated from. After a config change you need to regenerate the geometry, check the dimensions and redo the consistency audit before trusting any new model output.
 
-The [dimensioned drawing set](drawings/coldplate_revA_dimensioned_drawings.pdf), [CAD validation report](drawings/coldplate_revA_validation_report.pdf), and [bill of materials](exports/reports/bom.csv) document the preliminary hardware. The software's corrected seal/plate screening is explained in [Theory and methods](docs/theory_and_methods.md#corrected-tolerance-and-plate-screening); the original CAD reports are preserved as historical export evidence.
+The [dimensioned drawing set](drawings/coldplate_revA_dimensioned_drawings.pdf), [CAD validation report](drawings/coldplate_revA_validation_report.pdf) and [bill of materials](exports/reports/bom.csv) cover the preliminary hardware. [Theory and methods](docs/theory_and_methods.md#corrected-tolerance-and-plate-screening) explains the corrected seal and plate screening that the software uses. The original CAD reports are kept as a record of what was exported at the time.
 
-The numerical package reads a lightweight SI adapter rather than CAD kernels. It does not rerun CAD during ordinary analysis. Its hydraulic results are reduced resistance-network screens with editable, unmeasured loss coefficients; they omit detailed junction/transfer losses and are not pump-sizing predictions. The Rev A design remains preliminary and [not machining approved or pressure rated](reference/DEPARTURES.md).
+The analysis package doesn't use a CAD kernel. It reads a small SI adapter and doesn't rerun the CAD during a normal analysis. The hydraulic results come from a simple resistance network with loss coefficients that you can edit and that nobody has measured. It leaves out detailed junction and transfer losses, so don't use it to size a pump. The Rev A design is still preliminary and [not approved for machining or rated for pressure](reference/DEPARTURES.md).
 
-## Interpretation limits
+## Limits
 
-- Water properties are interpolated from a rounded 15–70 °C pure-water table; mixtures and out-of-range temperatures fail explicitly.
-- Stability thresholds in `configs/demo.json` are provisional acceptance criteria, not safety limits.
-- Instrument uncertainty is available only when the required calibrated sensor specifications are supplied. It is not a substitute for calibration or repeatability evidence.
-- An upper-surface IR map cannot uniquely identify fine coolant-side `h`: spreading, contact resistance, heater distribution, emissivity/registration, and environmental loss can produce similar surface effects.
-- No operating/proof pressure, bolt torque, heater rating, or cutoff value is authorized by this repository. An independent hardware cutoff is required for the planned experiment.
+- Water properties are interpolated from a rounded pure-water table covering 15 to 70 °C. Mixtures and temperatures outside that range fail with an error.
+- The stability thresholds in `configs/demo.json` are provisional acceptance criteria, not safety limits.
+- Instrument uncertainty is only available when you supply the calibrated sensor specs it needs. It doesn't replace calibration or repeatability evidence.
+- An IR map of the top surface can't pin down fine detail in the coolant-side `h`. Heat spreading, contact resistance, how the heater distributes heat, emissivity and image registration, and environmental loss can all produce similar surface patterns.
+- This repo doesn't set any operating or proof pressure, bolt torque, heater rating or cutoff value. The planned experiment needs its own independent hardware cutoff.
 
-For assumptions, equations, and limits, read [Theory and methods](docs/theory_and_methods.md). For practical data collection, read the [proposed experiment protocol](docs/experiment_protocol.md). Reproducible software checks are summarized in [Verification](docs/verification.md).
+For the assumptions, equations and limits, read [Theory and methods](docs/theory_and_methods.md). For how to actually collect the data, read the [proposed experiment protocol](docs/experiment_protocol.md). The software checks you can rerun are in [Verification](docs/verification.md).
