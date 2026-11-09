@@ -2,14 +2,14 @@
 
 <p align="center"><a href="#overview">Overview</a> · <a href="#install">Install</a> · <a href="#usage">Usage</a> · <a href="#examples">Examples</a> · <a href="#cad-and-models">CAD and models</a> · <a href="#limits">Limits</a> · <a href="#references">References</a> · <a href="#terms">Terms</a></p>
 
-I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It's a CAD design for a testbed, plus analysis code and simple models, and so far it has only been run on synthetic data.
+I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It's a CAD design for a testbed, plus analysis code and simple models.
 
-## Key results
+## Status
 
-- There are no experimental results yet. Every example is synthetic, and nothing has been physically calibrated or checked against a real experiment.
+- There are no experimental results yet. Every example uses synthetic data, and nothing has been calibrated or checked against a real experiment.
 - The demo makes five synthetic runs. Four pass and one is rejected on purpose.
 - The CAD is a 51-solid imported assembly. It is preliminary and isn't approved for machining or rated for pressure.
-- 16 tests check the physics and behaviour against hand-worked answers, and all 16 passed on Python 3.14.3 locally.
+- 16 tests check the physics and behavior against hand-worked answers, and all 16 passed on Python 3.14.3 locally.
 
 ![Labeled Blender overview of the proposed ColdPlateTwin experiment](docs/figures/experiment_overview.png)
 
@@ -20,9 +20,6 @@ I wanted to know how much a flow insert actually changes a water-cooled cold pla
 ## Overview
 
 ColdPlateTwin has the parametric CAD for a testbed with interchangeable flow inserts, the code that analyzes the experiment, and simple reduced-order thermal-hydraulic models. The analysis takes time-stamped logger data, plus radiometric temperature matrices if you have them. It turns them into calorimetry, stability checks, uncertainty estimates and surface-temperature metrics.
-
-> [!IMPORTANT]
-> The software is tested, but the CAD is preliminary and all the examples are synthetic. Nothing has been physically calibrated or checked against a real experiment yet, and the hardware isn't approved for machining or pressure qualified.
 
 > [!NOTE]
 > <sub>cold plate: metal plate with water channels that carries heat away · flow insert: part placed in the channel to change the flow · reduced-order model: a deliberately simple model · thermal-hydraulic: heat and fluid flow together · calorimetry: working out heat from temperature and flow · radiometric: infrared camera temperatures · h: coolant-side heat-transfer coefficient</sub>
@@ -43,7 +40,7 @@ ColdPlateTwin has the parametric CAD for a testbed with interchangeable flow ins
 | `cadquery/` | Regeneration source and shared CAD configuration | Preserved source. Regenerate and inspect after any change |
 | `freecad/` | Imported 51-solid assembly and conversion script | Native import, not a fully parametric FreeCAD feature history |
 | `drawings/`, `exports/` | Rev A drawings, STEP/STL/DXF exports and validation evidence | Preliminary engineering files, not a release approval |
-| `visualization/` | Editable Blender scene, build script and metre-scaled CAD mesh | Schematic of the proposed apparatus |
+| `visualization/` | Editable Blender scene, build script and meter-scaled CAD mesh | Schematic of the proposed apparatus |
 | `src/coldplatetwin/` | Analysis, stability, uncertainty, hydraulics, thermal sensitivity and dashboard code | Tested offline workflow |
 | `configs/demo.json` | The demo and model assumptions, plus provisional acceptance criteria | Editable analysis configuration |
 | `docs/` | [Theory and methods](docs/theory_and_methods.md), [proposed experiment protocol](docs/experiment_protocol.md) and [software verification](docs/verification.md) | Documentation |
@@ -103,16 +100,15 @@ Only IR frames with a timestamp inside the accepted averaging window count towar
 
 When the analysis passes it exits with 0. When the steady-state check rejects the run it exits with 2, but it still writes a bundle so you can see why.
 
-If you don't have an IR export, leave out all three IR options. And please don't present the synthetic examples as measurements.
+If you don't have an IR export, leave out all three IR options.
 
 Sources: src/coldplatetwin/, examples/radiometric_matrix_config.json, examples/radiometric_matrix_fixture.csv, docs/experiment_protocol.md
 
 ## Examples
 
-> [!IMPORTANT]
-> The demo's numbers are there to check the code, so they aren't experimental results and they don't rank the inserts.
+The demo's numbers are there to check the code, so they don't rank the inserts.
 
-The demo makes five synthetic runs. Four pass and one is rejected on purpose. Git ignores the generated output, so use a fresh output folder when you change the inputs.
+It makes five synthetic runs. Four pass and one is rejected on purpose. Git ignores the generated output, so use a fresh output folder when you change the inputs.
 
 ![Synthetic time traces from the checked-in demonstration](docs/figures/synthetic_time_traces.png)
 
