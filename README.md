@@ -1,6 +1,15 @@
 # ColdPlateTwin (Rev A)
 
-I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It has the parametric CAD for a testbed with interchangeable flow inserts, the code that analyzes the experiment, and simple reduced-order thermal-hydraulic models. The analysis takes time-stamped logger data, plus radiometric temperature matrices if you have them, and turns them into calorimetry, stability checks, uncertainty estimates and surface-temperature metrics.
+<p align="center"><a href="#overview">Overview</a> · <a href="#install">Install</a> · <a href="#usage">Usage</a> · <a href="#examples">Examples</a> · <a href="#cad-and-models">CAD and models</a> · <a href="#limits">Limits</a> · <a href="#references">References</a> · <a href="#terms">Terms</a></p>
+
+I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It's a CAD design for a testbed, plus analysis code and simple models, and so far it has only been run on synthetic data.
+
+## Key results
+
+- There are no experimental results yet. Every example is synthetic, and nothing has been physically calibrated or checked against a real experiment.
+- The demo makes five synthetic runs. Four pass and one is rejected on purpose.
+- The CAD is a 51-solid imported assembly. It is preliminary and isn't approved for machining or rated for pressure.
+- 16 tests check the physics and behaviour against hand-worked answers, and all 16 passed on Python 3.14.3 locally.
 
 ![Labeled Blender overview of the proposed ColdPlateTwin experiment](docs/figures/experiment_overview.png)
 
@@ -8,17 +17,26 @@ I wanted to know how much a flow insert actually changes a water-cooled cold pla
 
 [Theory and methods](docs/theory_and_methods.md) · [Experiment protocol](docs/experiment_protocol.md) · [CAD assembly](freecad/ColdPlate_RevA.FCStd) · [Blender scene and render source](visualization/README.md)
 
-Status: the software is tested, but the CAD is preliminary and all the examples are synthetic. Nothing has been physically calibrated or checked against a real experiment yet, and the hardware isn't approved for machining or pressure qualified.
+## Overview
 
-## What the experiment is for
+ColdPlateTwin has the parametric CAD for a testbed with interchangeable flow inserts, the code that analyzes the experiment, and simple reduced-order thermal-hydraulic models. The analysis takes time-stamped logger data, plus radiometric temperature matrices if you have them. It turns them into calorimetry, stability checks, uncertainty estimates and surface-temperature metrics.
+
+> [!IMPORTANT]
+> The software is tested, but the CAD is preliminary and all the examples are synthetic. Nothing has been physically calibrated or checked against a real experiment yet, and the hardware isn't approved for machining or pressure qualified.
+
+> [!NOTE]
+> <sub>cold plate: metal plate with water channels that carries heat away · flow insert: part placed in the channel to change the flow · reduced-order model: a deliberately simple model · thermal-hydraulic: heat and fluid flow together · calorimetry: working out heat from temperature and flow · radiometric: infrared camera temperatures · h: coolant-side heat-transfer coefficient</sub>
+
+### Questions
 
 - With the same steady operating conditions, how does each insert change the measured heat to water, the pressure drop, the surface temperature statistics and the uncertainty on each?
 - Does the measured energy balance close within its uncertainty once environmental losses and transient storage are accounted for?
 - Which differences are still there after you take out calibration effects that the runs share?
 
-Those questions need real measurements. The thermal calculation in this repo just imposes sensitivity patterns for the coolant-side heat-transfer coefficient `h`. It doesn't predict `h` from the insert geometry or the flow, it doesn't model the coolant warming up, and it can't rank the inserts.
+> [!WARNING]
+> Those questions need real measurements. The thermal calculation in this repo just imposes sensitivity patterns for the coolant-side heat-transfer coefficient `h`. It doesn't predict `h` from the insert geometry or the flow, it doesn't model the coolant warming up, and it can't rank the inserts.
 
-## What's in the repo
+### Repository contents
 
 | Area | What it has | Status |
 |---|---|---|
@@ -30,7 +48,9 @@ Those questions need real measurements. The thermal calculation in this repo jus
 | `configs/demo.json` | The demo and model assumptions, plus provisional acceptance criteria | Editable analysis configuration |
 | `docs/` | [Theory and methods](docs/theory_and_methods.md), [proposed experiment protocol](docs/experiment_protocol.md) and [software verification](docs/verification.md) | Documentation |
 
-## Install and run
+Sources: configs/demo.json, docs/theory_and_methods.md, docs/experiment_protocol.md, docs/verification.md
+
+## Install
 
 It supports Python 3.11 to 3.14, and CI uses 3.12. You don't need CAD software, instruments, a GPU or a paid solver to install it. [Software verification](docs/verification.md) lists the tested environments and what the tests cover.
 
@@ -45,15 +65,12 @@ python -m pytest
 
 On Windows PowerShell, make the environment with `py -m venv .venv` and activate it with `.\.venv\Scripts\Activate.ps1`. The install and `coldplate` commands are the same.
 
-The demo makes five synthetic runs. Four pass and one is rejected on purpose. Its numbers are there to check the code, so they aren't experimental results and they don't rank the inserts. Git ignores the generated output, so use a fresh output folder when you change the inputs.
+Sources: pyproject.toml, docs/verification.md
 
-![Synthetic time traces from the checked-in demonstration](docs/figures/synthetic_time_traces.png)
+## Usage
 
-*Synthetic logger data, not measured from real hardware. It only shows the calibrated channels and how the analysis works.*
-
-![Synthetic imposed-h thermal scenario](docs/figures/synthetic_thermal_map.png)
-
-*A model-only temperature scenario with an imposed coolant-side `h`. It isn't an IR measurement, a CFD result or a prediction for any insert.*
+> [!NOTE]
+> <sub>logger data: time-stamped readings from the flow, temperature, pressure and heater sensors · ROI: region of interest, the patch of the surface image that gets measured · steady-state check: test that conditions held steady long enough · bundle: the folder of results one analysis writes</sub>
 
 To look at the results in the local dashboard once you've generated or imported a bundle:
 
@@ -63,7 +80,7 @@ coldplate dashboard --data outputs/demo
 
 It only listens on localhost, normally on port 8501. Stop it with `Ctrl-C`.
 
-## Analyze logger data
+### Analyze logger data
 
 The input CSV needs the columns `timestamp`, `flow_lpm`, `tin_c`, `tout_c`, `dp_pa`, `ambient_c`, `heater_voltage_v` and `heater_current_a`. The metadata file gives UTC ISO-8601 timestamps, units, where the run came from, the geometry hash, calibrations, synchronization and uncertainty records. If a unit is wrong or a number is malformed, the importer rejects the file instead of quietly converting it.
 
@@ -82,15 +99,45 @@ coldplate analyze logger.csv metadata.json \
   --output outputs/imported-run
 ```
 
-Only IR frames with a timestamp inside the accepted averaging window count toward the ROI metrics. Frames without a time are kept so you can look at them, but they aren't given one. When the analysis passes it exits with 0. When the steady-state check rejects the run it exits with 2, but it still writes a bundle so you can see why. If you don't have an IR export, leave out all three IR options. And please don't present the synthetic examples as measurements.
+Only IR frames with a timestamp inside the accepted averaging window count toward the ROI metrics. Frames without a time are kept so you can look at them, but they aren't given one.
 
-## CAD and model provenance
+When the analysis passes it exits with 0. When the steady-state check rejects the run it exits with 2, but it still writes a bundle so you can see why.
 
-Open `freecad/ColdPlate_RevA.FCStd` in FreeCAD to look at the imported assembly, or use [the assembled STEP](exports/step/CP-REV-A_assembly_FI-100.step). To change the geometry, edit `cadquery/coldplate/config.py` and follow [the CadQuery regeneration instructions](cadquery/README.md). CadQuery is where the geometry is generated from. After a config change you need to regenerate the geometry, check the dimensions and redo the consistency audit before trusting any new model output.
+If you don't have an IR export, leave out all three IR options. And please don't present the synthetic examples as measurements.
 
-The [dimensioned drawing set](drawings/coldplate_revA_dimensioned_drawings.pdf), [CAD validation report](drawings/coldplate_revA_validation_report.pdf) and [bill of materials](exports/reports/bom.csv) cover the preliminary hardware. [Theory and methods](docs/theory_and_methods.md#corrected-tolerance-and-plate-screening) explains the corrected seal and plate screening that the software uses. The original CAD reports are kept as a record of what was exported at the time.
+Sources: src/coldplatetwin/, examples/radiometric_matrix_config.json, examples/radiometric_matrix_fixture.csv, docs/experiment_protocol.md
 
-The analysis package doesn't use a CAD kernel. It reads a small SI adapter and doesn't rerun the CAD during a normal analysis. The hydraulic results come from a simple resistance network with loss coefficients that you can edit and that nobody has measured. It leaves out detailed junction and transfer losses, so don't use it to size a pump. The Rev A design is still preliminary and [not approved for machining or rated for pressure](reference/DEPARTURES.md).
+## Examples
+
+> [!IMPORTANT]
+> The demo's numbers are there to check the code, so they aren't experimental results and they don't rank the inserts.
+
+The demo makes five synthetic runs. Four pass and one is rejected on purpose. Git ignores the generated output, so use a fresh output folder when you change the inputs.
+
+![Synthetic time traces from the checked-in demonstration](docs/figures/synthetic_time_traces.png)
+
+*Synthetic logger data, not measured from real hardware. It only shows the calibrated channels and how the analysis works.*
+
+![Synthetic imposed-h thermal scenario](docs/figures/synthetic_thermal_map.png)
+
+*A model-only temperature scenario with an imposed coolant-side `h`. It isn't an IR measurement, a CFD result or a prediction for any insert.*
+
+[Full detail](docs/demo-run.md)
+
+Sources: configs/demo.json, docs/figures/synthetic_time_traces.png, docs/figures/synthetic_thermal_map.png, docs/verification.md
+
+## CAD and models
+
+Open `freecad/ColdPlate_RevA.FCStd` in FreeCAD to look at the imported assembly, or use [the assembled STEP](exports/step/CP-REV-A_assembly_FI-100.step). To change the geometry, edit `cadquery/coldplate/config.py` and follow [the CadQuery regeneration instructions](cadquery/README.md).
+
+> [!WARNING]
+> The hydraulic results come from a simple resistance network with loss coefficients that you can edit and that nobody has measured. It leaves out detailed junction and transfer losses, so don't use it to size a pump. The Rev A design is still preliminary and [not approved for machining or rated for pressure](reference/DEPARTURES.md).
+
+The analysis package doesn't use a CAD kernel. After a geometry change you need to regenerate it, check the dimensions and redo the consistency audit before trusting any new model output.
+
+[Full detail](docs/cad-and-models.md)
+
+Sources: cadquery/, freecad/, exports/, drawings/, reference/DEPARTURES.md
 
 ## Limits
 
@@ -100,4 +147,26 @@ The analysis package doesn't use a CAD kernel. It reads a small SI adapter and d
 - An IR map of the top surface can't pin down fine detail in the coolant-side `h`. Heat spreading, contact resistance, how the heater distributes heat, emissivity and image registration, and environmental loss can all produce similar surface patterns.
 - This repo doesn't set any operating or proof pressure, bolt torque, heater rating or cutoff value. The planned experiment needs its own independent hardware cutoff.
 
-For the assumptions, equations and limits, read [Theory and methods](docs/theory_and_methods.md). For how to actually collect the data, read the [proposed experiment protocol](docs/experiment_protocol.md). The software checks you can rerun are in [Verification](docs/verification.md).
+## References
+
+- [Theory and methods](docs/theory_and_methods.md): assumptions, equations and limits
+- [Proposed experiment protocol](docs/experiment_protocol.md): how to actually collect the data
+- [Verification](docs/verification.md): the software checks you can rerun
+- [CAD and models](docs/cad-and-models.md) and [demo run](docs/demo-run.md)
+- [Dimensioned drawing set](drawings/coldplate_revA_dimensioned_drawings.pdf), [CAD validation report](drawings/coldplate_revA_validation_report.pdf) and [bill of materials](exports/reports/bom.csv)
+- [Corrected seal and plate screening](docs/theory_and_methods.md#corrected-tolerance-and-plate-screening), which the software uses. The original CAD reports are kept as a record of what was exported at the time.
+
+## Terms
+
+- Cold plate: a metal plate with water channels that carries heat away
+- Flow insert: a part placed in the channel to change the flow
+- Reduced-order model: a deliberately simple model
+- Thermal-hydraulic: heat and fluid flow considered together
+- Calorimetry: working out heat from temperature and flow
+- Radiometric (IR) temperature matrix: a grid of infrared camera temperatures
+- ROI (region of interest): the patch of the surface image that gets measured
+- `h`: the coolant-side heat-transfer coefficient
+- Steady-state check: a test that conditions held steady long enough
+- Loss coefficient: a number saying how much pressure a bend or fitting costs
+- STEP: a common CAD exchange file
+- CFD (computational fluid dynamics): a full flow simulation
