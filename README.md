@@ -2,14 +2,14 @@
 
 <p align="center"><a href="#overview">Overview</a> · <a href="#install">Install</a> · <a href="#usage">Usage</a> · <a href="#examples">Examples</a> · <a href="#cad-and-models">CAD and models</a> · <a href="#limits">Limits</a> · <a href="#references">References</a> · <a href="#terms">Terms</a></p>
 
-I wanted to know how much a flow insert actually changes a water-cooled cold plate: the heat it pulls into the water, the pressure drop it costs and how even the surface temperature gets. ColdPlateTwin is the setup I built to answer that. It's a CAD design for a testbed, plus analysis code and simple models.
+I designed a Rev A water-cooled cold-plate testbed with interchangeable inserts and built a Python workflow for timestamped logger data and optional infrared frames. The workflow screens for steady state, calculates heat removal and pressure drop, and propagates correlated sensor uncertainties. Reduced-order thermal and hydraulic models support preliminary comparisons between inserts.
 
 ## Status
 
 - There are no experimental results yet. Every example uses synthetic data, and nothing has been calibrated or checked against a real experiment.
 - The demo makes five synthetic runs. Four pass and one is rejected on purpose.
 - The CAD is a 51-solid imported assembly. It is preliminary and isn't approved for machining or rated for pressure.
-- 16 tests check the physics and behavior against hand-worked answers, and all 16 passed on Python 3.14.3 locally.
+- Sixteen tests cover the physics and workflow. They check the analytical uncertainty Jacobian against finite differences, preserve paired temperature-sensor covariance, verify thermal energy and hydraulic mass conservation, and exercise the CLI and dashboard.
 
 ![Labeled Blender overview of the proposed ColdPlateTwin experiment](docs/figures/experiment_overview.png)
 
