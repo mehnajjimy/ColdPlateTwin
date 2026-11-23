@@ -2,14 +2,13 @@
 
 <p align="center"><a href="#overview">Overview</a> · <a href="#install">Install</a> · <a href="#usage">Usage</a> · <a href="#examples">Examples</a> · <a href="#cad-and-models">CAD and models</a> · <a href="#limits">Limits</a> · <a href="#references">References</a> · <a href="#terms">Terms</a></p>
 
-I designed a Rev A water-cooled cold-plate testbed with interchangeable inserts and built a Python workflow for timestamped logger data and optional infrared frames. The workflow screens for steady state, calculates heat removal and pressure drop, and propagates correlated sensor uncertainties. Reduced-order thermal and hydraulic models support preliminary comparisons between inserts.
+In one of five simulated cold-plate runs, the outlet thermometer stops reporting at 500 seconds. The software rejects the run. Without the outlet temperature, it cannot tell how much heat the water carried away. The other four records pass the checks and can be used to test the calculations.
 
 ## Status
 
-- There are no experimental results yet. Every example uses synthetic data, and nothing has been calibrated or checked against a real experiment.
-- The demo makes five synthetic runs. Four pass and one is rejected on purpose.
-- The CAD is a 51-solid imported assembly. It is preliminary and isn't approved for machining or rated for pressure.
-- Sixteen tests cover the physics and workflow. They check the analytical uncertainty Jacobian against finite differences, preserve paired temperature-sensor covariance, verify thermal energy and hydraulic mass conservation, and exercise the CLI and dashboard.
+- I designed the water-cooled testbed and built its logger and infrared analysis in Python. The hardware is still at the preliminary CAD stage. All five example runs use generated data.
+- The FreeCAD assembly contains 51 imported solids. The design has no pressure rating or machining approval.
+- Sixteen tests cover the software. They compare uncertainty derivatives with finite differences, check how paired temperature-sensor errors propagate, verify energy and mass conservation in the models, and exercise the command line and dashboard.
 
 ![Labeled Blender overview of the proposed ColdPlateTwin experiment](docs/figures/experiment_overview.png)
 
@@ -19,19 +18,19 @@ I designed a Rev A water-cooled cold-plate testbed with interchangeable inserts 
 
 ## Overview
 
-ColdPlateTwin has the parametric CAD for a testbed with interchangeable flow inserts, the code that analyzes the experiment, and simple reduced-order thermal-hydraulic models. The analysis takes time-stamped logger data, plus radiometric temperature matrices if you have them. It turns them into calorimetry, stability checks, uncertainty estimates and surface-temperature metrics.
+The proposed plate accepts interchangeable inserts that change the path water takes under a heated surface. An insert might carry away more heat while also requiring more pressure to push water through. To compare inserts, the experiment would need readings from both sides of the plate at a steady flow and heater power.
 
 > [!NOTE]
 > <sub>cold plate: metal plate with water channels that carries heat away · flow insert: part placed in the channel to change the flow · reduced-order model: a deliberately simple model · thermal-hydraulic: heat and fluid flow together · calorimetry: working out heat from temperature and flow · radiometric: infrared camera temperatures · h: coolant-side heat-transfer coefficient</sub>
 
 ### Questions
 
-- With the same steady operating conditions, how does each insert change the measured heat to water, the pressure drop, the surface temperature statistics and the uncertainty on each?
-- Does the measured energy balance close within its uncertainty once environmental losses and transient storage are accounted for?
-- Which differences are still there after you take out calibration effects that the runs share?
+- How much heat does the water carry away for a given pressure drop?
+- How much of the heater input remains after accounting for heat carried away, losses to the surroundings and heat stored during warm-up?
+- When comparing runs, how much uncertainty comes from calibrations the two runs share?
 
 > [!WARNING]
-> Those questions need real measurements. The thermal calculation in this repo just imposes sensitivity patterns for the coolant-side heat-transfer coefficient `h`. It doesn't predict `h` from the insert geometry or the flow, it doesn't model the coolant warming up, and it can't rank the inserts.
+> The thermal model takes the coolant-side heat-transfer coefficient `h` as an input. Predicting which insert cools best would require a relationship between insert geometry, flow and `h`, together with the change in coolant temperature along its path.
 
 ### Repository contents
 
@@ -106,17 +105,17 @@ Sources: src/coldplatetwin/, examples/radiometric_matrix_config.json, examples/r
 
 ## Examples
 
-The demo's numbers are there to check the code, so they don't rank the inserts.
+The generator writes a temperature, flow and power record for each insert case. The analysis searches those readings for a steady interval before averaging. In the deliberately incomplete record, the outlet temperature disappears before a usable interval is available.
 
-It makes five synthetic runs. Four pass and one is rejected on purpose. Git ignores the generated output, so use a fresh output folder when you change the inputs.
+Git ignores generated results. Use a fresh output folder when changing inputs so the plots and summaries come from the same run.
 
 ![Synthetic time traces from the checked-in demonstration](docs/figures/synthetic_time_traces.png)
 
-*Synthetic logger data, not measured from real hardware. It only shows the calibrated channels and how the analysis works.*
+*The outlet temperature rises during startup. While the plate is warming, some heater power goes into heating the plate itself. The analysis waits for a steady interval before it reports average heat removal.*
 
 ![Synthetic imposed-h thermal scenario](docs/figures/synthetic_thermal_map.png)
 
-*A model-only temperature scenario with an imposed coolant-side `h`. It isn't an IR measurement, a CFD result or a prediction for any insert.*
+*The input to this calculation is a chosen pattern of heat transfer at the coolant boundary. The colors show the surface temperatures predicted under that assumption.*
 
 [Full detail](docs/demo-run.md)
 
@@ -129,7 +128,7 @@ Open `freecad/ColdPlate_RevA.FCStd` in FreeCAD to look at the imported assembly,
 > [!WARNING]
 > The hydraulic results come from a simple resistance network with loss coefficients that you can edit and that nobody has measured. It leaves out detailed junction and transfer losses, so don't use it to size a pump. The Rev A design is still preliminary and [not approved for machining or rated for pressure](reference/DEPARTURES.md).
 
-The analysis package doesn't use a CAD kernel. After a geometry change you need to regenerate it, check the dimensions and redo the consistency audit before trusting any new model output.
+The analysis package reads geometry values without opening the CAD model. After editing the geometry, regenerate the exports, check their dimensions and repeat the consistency audit.
 
 [Full detail](docs/cad-and-models.md)
 
